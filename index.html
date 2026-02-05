@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matematik & Kodlama Atölyesi</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --panel-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --primary: #4a90e2;    /* Canlı Mavi */
+            --secondary: #f5a623;  /* Turuncu (Vurgular) */
+            --success: #7ed321;    /* Yeşil (Başarı) */
+            --text-main: #2c3e50;
+            --code-bg: #282c34;    /* One Dark Tema */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            /* K12 Dostu, Yuvarlak hatlı font */
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        /* --- HEADER --- */
+        header {
+            height: 60px;
+            background: #fff;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            z-index: 20;
+        }
+
+        .lesson-badge {
+            background: #e1f5fe;
+            color: #0277bd;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- ANA YAP (3 KOLON) --- */
+        .workspace {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 60px);
+        }
+
+        /* 1. SOL PANEL: DERS İÇERİĞİ (500px Sabit) */
+        .col-left {
+            width: 500px; /* İstenilen Genişlik */
+            min-width: 500px;
+            background: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.03);
+            z-index: 10;
+        }
+
+        .lesson-content {
+            padding: 30px;
+            font-size: 1.1rem; /* Okuması kolay büyük font */
+            line-height: 1.6;
+        }
+
+        h2 { color: var(--primary); margin-top: 0; font-weight: 800; font-size: 1.8rem; }
+        h3 { color: #f5a623; margin-bottom: 10px; font-weight: 700; }
+
+        /* Matematik Kutusu */
+        .math-box {
+            background: #fff8e1; /* Sarı not kağıdı rengi */
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 1rem;
+        }
+
+        .math-formula {
+            background: #fff;
+            padding: 10px;
+            border: 2px dashed #ffc107;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #d35400;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
+
+        .visual-example {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        /* Şekil (SVG) */
+        .shape-example {
+            width: 180px;
+            height: auto;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
+        }
+
+        /* Görev Listesi */
+        .task-list li { margin-bottom: 12px; }
+        .highlight { color: #e91e63; font-weight: 800; background: #fce4ec; padding: 0 5px; border-radius: 4px; }
+
+
+        /* 2. ORTA PANEL: KODLAMA */
+        .col-middle {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--code-bg);
+            border-right: 1px solid #444;
+            position: relative;
+        }
+
+        .panel-header {
+            background: #21252b;
+            color: #abb2bf;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #181a1f;
+        }
+
+        #editor { flex: 1; font-size: 18px; /* Kod fontu da büyütüldü */ }
+
+        /* Çalıştır Butonu */
+        .play-button {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(126, 211, 33, 0.4);
+            transition: transform 0.2s, background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 50;
+        }
+        .play-button:hover { transform: scale(1.05); background: #6cc644; }
+
+
+        /* 3. SAĞ PANEL: ÇIKTI */
+        .col-right {
+            flex: 1;
+            background: #ffffff;
+            /* Milimetrik kağıt deseni */
+            background-image: 
+                linear-gradient(#e0e0e0 1px, transparent 1px),
+                linear-gradient(90deg, #e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        #canvas-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #mycanvas {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid #333;
+            border-radius: 4px;
+        }
+
+        /* Hata Baloncuğu */
+        .error-bubble {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: #ff5252;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 2rem;">📐</span>
+            <span style="font-weight: 800; font-size: 1.4rem; color: #2c3e50;">Matematik Laboratuvarı</span>
+        </div>
+        <div class="lesson-badge">
+            <span>KONU:</span>
+            <span>Düzgün Çokgenler</span>
+        </div>
+    </header>
+
+    <div class="workspace">
+        
+        <div class="col-left">
+            <div class="lesson-content">
+                <h2>Çokgenleri Keşfedelim!</h2>
+                <p>Merhaba! Bugün kodlama kullanarak matematikteki <strong>dış açı</strong> kuralını kanıtlayacağız.</p>
+
+                <div class="visual-example">
+                    <svg class="shape-example" viewBox="0 0 100 100">
+                        <polygon points="50,5 95,38 78,90 22,90 5,38" fill="#e1f5fe" stroke="#4a90e2" stroke-width="3"/>
+                        <path d="M95,38 L115,38" stroke="#f5a623" stroke-width="2" stroke-dasharray="4"/>
+                        <text x="50" y="115" font-size="10" text-anchor="middle">Beşgen (5 Kenar)</text>
+                    </svg>
+                </div>
+
+                <h3>📝 Kural Nedir?</h3>
+                <div class="math-box">
+                    Düzgün bir çokgenin tüm dış açılarının toplamı her zaman <strong>360°</strong> dir.
+                    <br><br>
+                    Kaplumbağamızın (Turtle) dönüş açısını bulmak için şu formülü kullanırız:
+                    <div class="math-formula">
+                        Açı = 360 ÷ Kenar Sayısı
+                    </div>
+                </div>
+
+                <h3>🚀 Görevimiz:</h3>
+                <p>Bir <strong>Beşgen (Pentagon)</strong> çizmek istiyoruz.</p>
+                <ul class="task-list">
+                    <li>Kenar sayısı: <span class="highlight">5</span></li>
+                    <li>Formülü kullanarak açıyı hesapla.</li>
+                    <li><code>for</code> döngüsü kurarak şekli çiz.</li>
+                </ul>
+
+                <p style="font-size: 0.9rem; color: #7f8c8d; margin-top: 20px;">
+                    <em>İpucu: Python'da bölme işlemi için <code>/</code> işaretini kullanırız.</em>
+                </p>
+            </div>
+        </div>
+
+        <div class="col-middle">
+            <div class="panel-header">
+                <span>main.py</span>
+                <span>Python 3</span>
+            </div>
+            
+            <div id="editor">import turtle
+
+t = turtle.Turtle()
+t.shape("turtle")
+t.color("blue")
+t.pensize(4)
+
+# --- MATEMATİK HESAPLAMASI ---
+
+# 1. Kenar sayısını belirle
+kenar_sayisi = 5
+
+# 2. Dönüş açısını hesapla (360 / Kenar)
+donus_acisi = 360 / kenar_sayisi
+
+print("Hesaplanan Açı:", donus_acisi)
+
+# --- ÇİZİM DÖNGÜSÜ ---
+# Kenar sayısı kadar tekrar et
+for i in range(kenar_sayisi):
+    t.forward(100)       # İleri git
+    t.left(donus_acisi)  # Hesaplanan açı kadar dön
+
+turtle.done()
+</div>
+
+            <button class="play-button" onclick="runit()">
+                <span>▶</span> Kodu Çalıştır
+            </button>
+        </div>
+
+        <div class="col-right">
+            <div style="padding: 10px; text-align: right; color: #999; font-size: 0.8rem;">
+                Görsel Çıktı Ekranı
+            </div>
+            <div id="canvas-area">
+                <div id="mycanvas"></div>
+            </div>
+            
+            <div id="error-box" class="error-bubble"></div>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+
+    <script>
+        // ACE EDİTÖR
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/one_dark"); // Göz yormayan koyu tema
+        editor.session.setMode("ace/mode/python");
+        editor.setFontSize(18); // K12 için büyük font
+        editor.setShowPrintMargin(false);
+
+        // SKULPT AYARLARI
+        function outf(text) { 
+            console.log(text); 
+        } 
+        
+        function builtinRead(x) {
+            if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+                throw "File not found: '" + x + "'";
+            return Sk.builtinFiles["files"][x];
+        }
+
+        function runit() { 
+            var prog = editor.getValue(); 
+            var errBox = document.getElementById("error-box");
+            errBox.style.display = "none";
+
+            var canvasDiv = document.getElementById("mycanvas");
+            canvasDiv.innerHTML = ""; 
+
+            Sk.pre = "output";
+            Sk.configure({
+                output: outf, 
+                read: builtinRead,
+                __future__: Sk.python3
+            }); 
+
+            (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = 'mycanvas';
+
+            var myPromise = Sk.misceval.asyncToPromise(function() {
+                return Sk.importMainWithBody("<stdin>", false, prog, true);
+            });
+
+            myPromise.then(function(mod) {
+                console.log('Başarı');
+            },
+            function(err) {
+                console.log(err.toString());
+                errBox.innerHTML = "⚠️ Ops! Bir hata var: <br>" + err.toString();
+                errBox.style.display = "block";
+                setTimeout(() => { errBox.style.display = "none"; }, 6000);
+            });
+        } 
+    </script>
+</body>
+</html>
